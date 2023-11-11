@@ -1,10 +1,14 @@
-# By Seth N.
-# and Adam E.
+##############################################
+# By Seth N. and Adam E.
+#
+# All problems are done and fully functional.
+# Please make sure the input vectors are in
+# the format: 1.4, 5.7, 8.0 with the square
+# brackets removed so the UI function can read
+# them in properly
+##############################################
 
-# Problem 1 is now done.
-# Problem 2 is now done.
-# Working on 3 now.
-
+import time
 import numpy as np
 from numpy.polynomial import Polynomial
 
@@ -69,6 +73,17 @@ def Poly(roots):
     return formatted_coeffs
 
 
+def remove_noise(signal, threshold):
+    fft_signal = FFT(signal)
+    fft_signal[np.abs(fft_signal) < threshold] = 0
+
+    # Getting the cleaned signal here:
+    cleaned_signal = IFFT(fft_signal)
+    cleaned_signal = np.clip(cleaned_signal.real, 0, 1)
+
+    return cleaned_signal
+
+
 def run_ui():
     print("Choose an option:")
     print("1 - Problem 1: Polynomial with given roots")
@@ -77,6 +92,8 @@ def run_ui():
     print("4 - Terminate the program")
 
     choice = input("Enter your choice: ")
+    start_time = time.process_time()  # Start the timer
+
     if choice == "1":
         filename = input("Enter the name of the text file containing the vector v: ")
         with open(filename, "r") as file:
@@ -93,13 +110,21 @@ def run_ui():
             vector_C = divide(vector_A, vector_B)
             print("Resulting polynomial C(x):", vector_C)
     elif choice == "3":
-        # This part of the program should be implemented as per your specific problem.
-        pass
+        filename = input("Enter the name of the file containing the signal: ")
+        threshold = float(input("Enter the threshold value: "))
+        with open(filename, "r") as file:
+            signal = [float(num) for num in file.read().split(",")]
+            cleaned_signal = remove_noise(signal, threshold)
+            print("Cleaned signal:", cleaned_signal)
     elif choice == "4":
-        print("Program terminated.")
+        print("Goodbye!")
         return
     else:
         print("Invalid option selected.")
+
+    end_time = time.process_time()  # This stops the timer
+    cpu_time = end_time - start_time
+    print(f" \n CPU Time for problem {choice}: {cpu_time} seconds \n")
 
 
 if __name__ == "__main__":
